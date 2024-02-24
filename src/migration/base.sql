@@ -21,6 +21,10 @@ create table if not exists mydb.tours
     foreign key (sportId) references sports(id)
 );
 
+-- creating index on tours (name) to increase the performance PROBLEM-1
+create index tours_name_ind on mydb.tours (name)
+
+
 create table if not exists mydb.matches
 (
     id int auto_increment not null primary key,
