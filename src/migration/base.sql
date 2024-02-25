@@ -22,7 +22,7 @@ create table if not exists mydb.tours
 );
 
 -- creating index on tours (name) to increase the performance PROBLEM-1
-create index tours_name_ind on mydb.tours (name)
+create index tours_name_ind on mydb.tours (name);
 
 
 create table if not exists mydb.matches
@@ -38,6 +38,30 @@ create table if not exists mydb.matches
     createdAt timestamp not null default current_timestamp,
     foreign key (tourId) references tours(id)
 );
+
+
+-- to increase performance for query in PROBLEM-3
+create index idx_matches_tourId on mydb.matches (tourId);
+
+
+create table if not exists mydb.news 
+(
+    id int auto_increment not null primary key,
+    title varchar(100) not null,
+    description text not null,
+    matchId int,
+    tourId int,
+    createdAt timestamp not null default current_timestamp,
+    foreign key (matchId) references matches(id),
+    foreign key (tourId) references tours(id),
+    -- exactly one of matchId and tourId should be not null because news can be created for a match or a tour
+    CONSTRAINT exactly_one_not_null CHECK ((matchId IS NOT NULL AND tourId IS NULL) OR (matchId IS NULL AND tourId IS NOT NULL))
+);
+
+-- to increase performance for query in PROBLEM-3
+create index idx_news_tourId on mydb.news (tourId);
+create index idx_news_matchId on mydb.news (matchId);
+
 
 -- seed data
 insert ignore into mydb.sports (id, name) values (1, 'Cricket');
